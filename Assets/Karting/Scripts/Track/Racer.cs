@@ -10,37 +10,42 @@ namespace KartGame.Track
     public class Racer : MonoBehaviour, IRacer
     {
         [Tooltip ("A reference to the IControllable for the kart.  Normally this is the KartMovement script.")]
-        [RequireInterface (typeof(IControllable))]
-        public Object kartMovement;
+        [SerializeField, RequireInterface (typeof(IControllable))]
+        protected Object m_kartMovementObject;
 
-        IControllable m_KartMovement;
-        bool m_IsTimerPaused = true;
-        float m_Timer = 0f;
-        int m_CurrentLap = 0;
-        List<float> m_LapTimes = new List<float> (9);
+        // Internal
+        protected IControllable m_KartMovement;
+        protected bool m_IsTimerPaused = true;
+        protected float m_Timer = 0f;
+        protected int m_CurrentLap = 0;
+        protected List<float> m_LapTimes = new List<float> (9);
 
-        void Awake ()
+        protected bool m_countdownTimerEnabled;
+
+        protected virtual void Awake ()
         {
-            m_KartMovement = kartMovement as IControllable;
+            m_KartMovement = m_kartMovementObject as IControllable;
         }
 
-        void Update ()
+        protected virtual void Update ()
         {
             if (m_CurrentLap > 0 && !m_IsTimerPaused)
+            {
                 m_Timer += Time.deltaTime;
+            }
         }
 
-        public void PauseTimer ()
+        public virtual void PauseTimer ()
         {
             m_IsTimerPaused = true;
         }
 
-        public void UnpauseTimer ()
+        public virtual void UnpauseTimer ()
         {
             m_IsTimerPaused = false;
         }
 
-        public void HitStartFinishLine ()
+        public virtual void HitStartFinishLine ()
         {
             if (m_CurrentLap > 0)
             {
@@ -51,22 +56,22 @@ namespace KartGame.Track
             m_CurrentLap++;
         }
 
-        public int GetCurrentLap ()
+        public virtual int GetCurrentLap ()
         {
             return m_CurrentLap;
         }
 
-        public List<float> GetLapTimes ()
+        public virtual List<float> GetLapTimes ()
         {
             return m_LapTimes;
         }
 
-        public float GetLapTime ()
+        public virtual float GetLapTime ()
         {
             return m_Timer;
         }
 
-        public float GetRaceTime ()
+        public virtual float GetRaceTime ()
         {
             float raceTime = m_Timer;
             for (int i = 0; i < m_LapTimes.Count; i++)
@@ -77,24 +82,37 @@ namespace KartGame.Track
             return raceTime;
         }
 
-        public void EnableControl ()
+        public virtual void EnableControl ()
         {
             m_KartMovement.EnableControl ();
         }
 
-        public void DisableControl ()
+        public virtual void DisableControl ()
         {
             m_KartMovement.DisableControl ();
         }
 
-        public bool IsControlled ()
+        public virtual bool IsControlled ()
         {
             return m_KartMovement.IsControlled ();
         }
 
-        public string GetName ()
+        public virtual string GetName ()
         {
             return name;
+        }
+
+        public virtual void SetCountdownTimer(float time, System.Action<float> onUpdateCountdown)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual void ResetRacerInfo()
+        {
+            m_IsTimerPaused = true;
+            m_Timer = 0f;
+            m_CurrentLap = 0;
+            m_countdownTimerEnabled = false;
         }
     }
 }

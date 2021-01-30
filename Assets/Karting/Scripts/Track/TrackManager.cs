@@ -9,25 +9,19 @@ namespace KartGame.Track
     /// <summary>
     /// A MonoBehaviour to deal with all the time and positions for the racers.
     /// </summary>
-    public class TrackManager : MonoBehaviour
+    public class TrackManager : RaceManager
     {
-        [Tooltip ("The name of the track in this scene.  Used for track time records.  Must be unique.")]
-        public string trackName;
+        [Header("Timetrial")]
         [Tooltip ("Number of laps for the race.")]
         public int raceLapTotal;
-        [Tooltip ("All the checkpoints for the track in the order that they should be completed starting with the start/finish line checkpoint.")]
-        public List<Checkpoint> checkpoints = new List<Checkpoint> ();
-        [Tooltip("Reference to an object responsible for repositioning karts.")]
-        public KartRepositioner kartRepositioner;
+        [SerializeField, Tooltip("Reference to an object responsible for repositioning karts.")]
+        protected KartRepositioner kartRepositioner;
 
-        bool m_IsRaceRunning;
-        Dictionary<IRacer, Checkpoint> m_RacerNextCheckpoints = new Dictionary<IRacer, Checkpoint> (16);
         TrackRecord m_SessionBestLap = TrackRecord.CreateDefault ();
         TrackRecord m_SessionBestRace = TrackRecord.CreateDefault ();
         TrackRecord m_HistoricalBestLap;
         TrackRecord m_HistoricalBestRace;
 
-        public bool IsRaceRunning => m_IsRaceRunning;
 
         /// <summary>
         /// Returns the best lap time recorded this session.  If no record is found, -1 is returned.
@@ -81,78 +75,45 @@ namespace KartGame.Track
             }
         }
 
-        void Awake ()
+        protected override void Awake ()
         {
-            if(checkpoints.Count < 3)
-                Debug.LogWarning ("There are currently " + checkpoints.Count + " checkpoints set on the Track Manager.  A minimum of 3 is recommended but kart control will not be enabled with 0.");
-            
-            m_HistoricalBestLap = TrackRecord.Load (trackName, 1);
-            m_HistoricalBestRace = TrackRecord.Load (trackName, raceLapTotal);
+            base.Awake();
+
+            m_HistoricalBestLap = TrackRecord.Load (m_trackName, 1);
+            m_HistoricalBestRace = TrackRecord.Load (m_trackName, raceLapTotal);
         }
 
-        void OnEnable ()
+        /// <summary>
+        /// Initialize race manager.
+        /// </summary>
+        public override void InitRaceManager(List<IRacer> racers, System.Action<bool> onRaceComplete)
         {
-            for (int i = 0; i < checkpoints.Count; i++)
-            {
-                checkpoints[i].OnKartHitCheckpoint += CheckRacerHitCheckpoint;
-            }
-        }
-
-        void OnDisable ()
-        {
-            for (int i = 0; i < checkpoints.Count; i++)
-            {
-                checkpoints[i].OnKartHitCheckpoint -= CheckRacerHitCheckpoint;
-            }
-        }
-
-        void Start ()
-        {
-            if(checkpoints.Count == 0)
-                return;
-            
-            Object[] allRacerArray = FindObjectsOfType<Object> ().Where (x => x is IRacer).ToArray ();
-
-            for (int i = 0; i < allRacerArray.Length; i++)
-            {
-                IRacer racer = allRacerArray[i] as IRacer;
-                m_RacerNextCheckpoints.Add (racer, checkpoints[0]);
-                racer.DisableControl ();
-            }
+            base.InitRaceManager(racers, onRaceComplete);
+            print($"racers: {racers.Count}");
         }
 
         /// <summary>
         /// Starts the timers and enables control of all racers.
         /// </summary>
-        public void StartRace ()
+        public override void StartRace ()
         {
-            m_IsRaceRunning = true;
-
-            foreach (KeyValuePair<IRacer, Checkpoint> racerNextCheckpoint in m_RacerNextCheckpoints)
-            {
-                racerNextCheckpoint.Key.EnableControl ();
-                racerNextCheckpoint.Key.UnpauseTimer ();
-            }
+            base.StartRace();
         }
 
         /// <summary>
         /// Stops the timers and disables control of all racers, also saves the historical records.
         /// </summary>
-        public void StopRace ()
+        public override void StopRace ()
         {
-            m_IsRaceRunning = false;
-
-            foreach (KeyValuePair<IRacer, Checkpoint> racerNextCheckpoint in m_RacerNextCheckpoints)
-            {
-                racerNextCheckpoint.Key.DisableControl ();
-                racerNextCheckpoint.Key.PauseTimer ();
-            }
+            base.StopRace();
 
             TrackRecord.Save (m_HistoricalBestLap);
             TrackRecord.Save (m_HistoricalBestRace);
+
+            onRaceComplete?.Invoke(true);
         }
 
-        void CheckRacerHitCheckpoint (IRacer racer, Checkpoint checkpoint)
+        protected override void OnCheckRacerHitCheckpoint (IRacer racer, Checkpoint checkpoint)
         {
             if (!m_IsRaceRunning)
             {
@@ -162,7 +123,7 @@ namespace KartGame.Track
 
             if (m_RacerNextCheckpoints.ContainsKeyValuePair (racer, checkpoint))
             {
-                m_RacerNextCheckpoints[racer] = checkpoints.GetNextInCycle (checkpoint);
+                m_RacerNextCheckpoints[racer] = m_checkpoints.GetNextInCycle (checkpoint);
                 RacerHitCorrectCheckpoint (racer, checkpoint);
             }
             else
@@ -178,7 +139,7 @@ namespace KartGame.Track
                 yield return null;
             }
 
-            CheckRacerHitCheckpoint (racer, checkpoint);
+            OnCheckRacerHitCheckpoint(racer, checkpoint);
         }
 
         void RacerHitCorrectCheckpoint (IRacer racer, Checkpoint checkpoint)
@@ -191,20 +152,20 @@ namespace KartGame.Track
                     float lapTime = racer.GetLapTime ();
 
                     if (m_SessionBestLap.time > lapTime)
-                        m_SessionBestLap.SetRecord (trackName, 1, racer, lapTime);
+                        m_SessionBestLap.SetRecord (m_trackName, 1, racer, lapTime);
 
                     if (m_HistoricalBestLap.time > lapTime)
-                        m_HistoricalBestLap.SetRecord (trackName, 1, racer, lapTime);
+                        m_HistoricalBestLap.SetRecord (m_trackName, 1, racer, lapTime);
 
                     if (racerCurrentLap == raceLapTotal)
                     {
                         float raceTime = racer.GetRaceTime ();
 
                         if (m_SessionBestRace.time > raceTime)
-                            m_SessionBestRace.SetRecord (trackName, raceLapTotal, racer, raceTime);
+                            m_SessionBestRace.SetRecord (m_trackName, raceLapTotal, racer, raceTime);
 
                         if (m_HistoricalBestRace.time > raceTime)
-                            m_HistoricalBestLap.SetRecord (trackName, raceLapTotal, racer, raceTime);
+                            m_HistoricalBestLap.SetRecord (m_trackName, raceLapTotal, racer, raceTime);
 
                         racer.DisableControl ();
                         racer.PauseTimer ();
@@ -218,7 +179,7 @@ namespace KartGame.Track
             }
         }
 
-        bool CanEndRace ()
+        protected override bool CanEndRace ()
         {
             foreach (KeyValuePair<IRacer, Checkpoint> racerNextCheckpoint in m_RacerNextCheckpoints)
             {
@@ -229,7 +190,7 @@ namespace KartGame.Track
             return true;
         }
 
-        void RacerHitIncorrectCheckpoint (IRacer racer, Checkpoint checkpoint)
+        private void RacerHitIncorrectCheckpoint (IRacer racer, Checkpoint checkpoint)
         {
             // No implementation required by template.
         }
@@ -247,8 +208,8 @@ namespace KartGame.Track
                 return;
             
             Checkpoint nextCheckpoint = m_RacerNextCheckpoints[racer];
-            int lastCheckpointIndex = (checkpoints.IndexOf (nextCheckpoint) + checkpoints.Count - 1) % checkpoints.Count;
-            Checkpoint lastCheckpoint = checkpoints[lastCheckpointIndex];
+            int lastCheckpointIndex = (m_checkpoints.IndexOf (nextCheckpoint) + m_checkpoints.Count - 1) % m_checkpoints.Count;
+            Checkpoint lastCheckpoint = m_checkpoints[lastCheckpointIndex];
 
             bool isControlled = movable.IsControlled ();
             movable.DisableControl ();
@@ -257,7 +218,7 @@ namespace KartGame.Track
             kartRepositioner.Reposition (lastCheckpoint, movable, isControlled);
         }
 
-        void ReenableControl (IMovable movable, bool doEnableControl)
+        private void ReenableControl (IMovable movable, bool doEnableControl)
         {
             if(doEnableControl)
                 movable.EnableControl ();

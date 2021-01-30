@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KartGame.KartSystems;
-using UnityEngine;
 
 namespace KartGame.Track
 {
@@ -43,6 +43,16 @@ namespace KartGame.Track
         /// Gets the total time spent in the race so far.
         /// </summary>
         float GetRaceTime ();
+
+        /// <summary>
+        /// Set timer for rush mode.
+        /// </summary>
+        void SetCountdownTimer(float time, Action<float> onUpdateCountdown);
+
+        /// <summary>
+        /// Reset racer variables.
+        /// </summary>
+        void ResetRacerInfo();
 
         /// <summary>
         /// Gets the name of the racer for scoreboards and records.

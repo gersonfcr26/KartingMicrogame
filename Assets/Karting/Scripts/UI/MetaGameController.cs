@@ -19,6 +19,8 @@ namespace KartGame.UI
         bool m_ShowMainCanvas = true;
         bool m_FirstTime = true;
 
+        public bool isPausable { get; set;}
+
         void OnEnable()
         {
             _ToggleMainMenu(m_ShowMainCanvas);
@@ -27,7 +29,7 @@ namespace KartGame.UI
         void Start()
         {
             //Start the game immediately rather than show the pause menu.
-            HandleMenuButton();
+            //HandleMenuButton();
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace KartGame.UI
 
         void Update()
         {
-            if (Input.GetButtonDown("Menu"))
+            if (isPausable && Input.GetButtonDown("Menu"))
             {
                 HandleMenuButton();
             }

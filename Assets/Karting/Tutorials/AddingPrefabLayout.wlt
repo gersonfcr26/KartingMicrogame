@@ -400,7 +400,7 @@ MonoBehaviour:
   m_LastFolders:
   - Assets/Karting/Prefabs
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\Users\Personal\AppData\Local\Temp\e23f1cb22075b994b930802d92f8778d
+  m_LastProjectPath: D:\Unity Projects\Repositories\KartingMicrogame
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
