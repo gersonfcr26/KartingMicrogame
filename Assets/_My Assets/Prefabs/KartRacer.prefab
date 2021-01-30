@@ -806,6 +806,7 @@ GameObject:
   - component: {fileID: 3299617869439532710}
   - component: {fileID: 8636500401481326958}
   - component: {fileID: 1869363584100473703}
+  - component: {fileID: 6929424223293825355}
   - component: {fileID: 1869363584100473704}
   - component: {fileID: 1116790663169518679}
   - component: {fileID: 1869363584100473707}
@@ -1027,6 +1028,24 @@ MonoBehaviour:
   OnKartCollision:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6929424223293825355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869363584100473705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca5ef5aa2dcf62408a1add3858e1659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_kartMovement: {fileID: 1869363584100473703}
+  m_maxSpeed: 0
+  m_acceleration: 5
+  m_braking: 3
+  m_steering: 8
+  m_applyOnStart: 1
 --- !u!54 &1869363584100473704
 Rigidbody:
   m_ObjectHideFlags: 0
