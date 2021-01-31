@@ -10,6 +10,6 @@ public class CountdownView : MonoBehaviour
 
     public void SetCountdownView(float value)
     {
-        m_countdownText.SetText(value.ToString("F0"));
+        m_countdownText.SetText(value.ToString("F2"));
     }
 }

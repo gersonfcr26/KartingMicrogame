@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using KartGame.Track;
 using KartGame.UI;
+using KartGame.KartSystems;
 
 public enum GameMode
 {
@@ -37,15 +39,17 @@ public class LevelBuilder : MonoBehaviour
     [SerializeField]
     private Transform m_racerParent;
     [SerializeField]
-    private int m_racersAmount;
+    private int m_opponentsAmount;
 
     // Internal 
+    private int m_racersAmount;
     private List<GameObject> m_racerInstances;
     private List<IRacer> m_racers;
     private RaceManager m_raceManager;
 
     private void Awake()
     {
+        m_racersAmount = m_opponentsAmount + 1;
         // Create reference lists
         m_racerInstances = new List<GameObject>(m_racersAmount);
         m_racers = new List<IRacer>(m_racersAmount);
@@ -53,7 +57,7 @@ public class LevelBuilder : MonoBehaviour
 
     private void BuildLevel()
     {
-        // Get slot info
+        // Get slot (grid) info
         var slots = m_slotsCtrl.GetSlots();
         if (m_racersAmount > slots.Count)
         {
@@ -75,6 +79,34 @@ public class LevelBuilder : MonoBehaviour
         {
             // Set racers grid position
             var newRacer = Instantiate(m_racerPrefab, slots[i].position, slots[i].rotation, m_racerParent);
+            
+            // Set player features
+            if (i == 0)
+            {
+                // Set specs delegates
+                var specsModifier = newRacer.GetComponent<KartSpecsModifier>();
+                m_mainUIController.onMaxSpeedChange = specsModifier.SetMaxSpeed;
+                m_mainUIController.onAccelChange = specsModifier.SetAccelaration;
+                m_mainUIController.onBrakingChange = specsModifier.SetBraking;
+                m_mainUIController.onSteeringChange = specsModifier.SetSteering;
+                // Apply specs initial values
+                specsModifier.SetMaxSpeed(m_mainUIController.currMaxSpeedValue);
+                specsModifier.SetAccelaration(m_mainUIController.currAccelValue);
+                specsModifier.SetBraking(m_mainUIController.currBrakingValue);
+                specsModifier.SetSteering(m_mainUIController.currSteeringValue);
+            }
+            // Set opponents AI input
+            else
+            {
+                // Set AI 
+                var kartMovement = newRacer.GetComponent<KartMovement>();
+                var simpleAIinput = newRacer.GetComponent<SimpleAIInput>();
+                kartMovement.SetInput(simpleAIinput);
+                // Set AI delegate
+                m_mainUIController.onAISelected = simpleAIinput.SetAIDifficulty;
+                // Apply initial AI
+                simpleAIinput.SetAIDifficulty(m_mainUIController.currAI);
+            }
             // Add racer
             m_racerInstances.Add(newRacer);
             m_racers.Add(m_racerInstances[i].GetComponent<IRacer>());
@@ -135,7 +167,14 @@ public class LevelBuilder : MonoBehaviour
 
     private void OnRaceComplete(bool isVictory)
     {
+        StartCoroutine(ShowMainMenu());
+    }
+
+    private IEnumerator ShowMainMenu()
+    {
+        yield return new WaitForSeconds(1f);
+
         m_gameController.ToggleMainMenu(true);
         m_mainUIController.SetActivePanel(0);
-    }
+    } 
 }

@@ -10,6 +10,7 @@ public abstract class RaceManager : MonoBehaviour
     protected List<Checkpoint> m_checkpoints = new List<Checkpoint>();
 
     // Internal
+    protected IRacer m_racerPlayer;
     protected Dictionary<IRacer, Checkpoint> m_RacerNextCheckpoints;
     protected bool m_IsRaceRunning;
 
@@ -53,6 +54,9 @@ public abstract class RaceManager : MonoBehaviour
             Debug.LogError("No checkpoints referenced");
             return;
         }
+
+        // Save player reference
+        m_racerPlayer = racers[0];
 
         // Set end race event
         this.onRaceComplete = onRaceComplete;

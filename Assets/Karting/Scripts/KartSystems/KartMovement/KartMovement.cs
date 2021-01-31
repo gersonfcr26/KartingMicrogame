@@ -695,5 +695,11 @@ namespace KartGame.KartSystems
         {
             return this;
         }
+
+        public void SetInput(Object inputObj)
+        {
+            this.input = inputObj;
+            m_Input = inputObj as IInput;
+        }
     }
 }

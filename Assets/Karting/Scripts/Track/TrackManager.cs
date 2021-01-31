@@ -89,7 +89,6 @@ namespace KartGame.Track
         public override void InitRaceManager(List<IRacer> racers, System.Action<bool> onRaceComplete)
         {
             base.InitRaceManager(racers, onRaceComplete);
-            print($"racers: {racers.Count}");
         }
 
         /// <summary>
