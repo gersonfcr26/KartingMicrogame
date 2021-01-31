@@ -33,6 +33,16 @@ namespace KartGame.UI
         [SerializeField]
         private TMP_Dropdown m_AIDropdown;
 
+        [Header("Dropdown Custom")]
+        [SerializeField]
+        private TMP_Dropdown m_wheelsDropdown;
+        [SerializeField]
+        private TMP_Dropdown m_hatDropdown;
+        [SerializeField]
+        private TMP_Dropdown m_kartDropdown;
+        [SerializeField]
+        private TMP_Dropdown m_characterDropdown;
+
         // Internal
         private RaceManager m_raceManager;
         private GameMode m_gameMode;
@@ -45,14 +55,24 @@ namespace KartGame.UI
 
         public bool isPausable { get; set; }
 
+        // Kart specs accessors
         public float currMaxSpeedValue => m_maxSpeedSlider.value;
         public float currAccelValue => m_accelSlider.value;
         public float currBrakingValue => m_brakesSlider.value;
         public float currSteeringValue => m_steeringSlider.value;
+        
+        // AI accessors
         public int currAI => m_AIDropdown.value;
+
+        // Custom accessors
+        public int wheelsSelectedIndex => m_wheelsDropdown.value;
+        public int hatSelectedIndex => m_hatDropdown.value;
+        public int kartSelectedIndex => m_kartDropdown.value;
+        public int characterSelectedIndex => m_characterDropdown.value;
 
         private void Awake()
         {
+            // Set AI dropdown
             m_AIDropdown.ClearOptions();
             List<string> options = new List<string>((int)AIDifficulty.Count);
             for(int i = 0; i < (int)AIDifficulty.Count; i++)

@@ -177,5 +177,11 @@ namespace KartGame.KartSystems
             frontLeftWheel.SteerWheel (rotationAngle);
             frontRightWheel.SteerWheel (rotationAngle);
         }
+
+        public void SetInput(Object inputObj)
+        {
+            this.input = inputObj;
+            m_Input = inputObj as IInput;
+        }
     }
 }

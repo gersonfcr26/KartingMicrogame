@@ -94,14 +94,21 @@ public class LevelBuilder : MonoBehaviour
                 specsModifier.SetAccelaration(m_mainUIController.currAccelValue);
                 specsModifier.SetBraking(m_mainUIController.currBrakingValue);
                 specsModifier.SetSteering(m_mainUIController.currSteeringValue);
+                // Customize kart
+                var kartCustomizer = newRacer.GetComponent<KartCustomizer>();
+                kartCustomizer.ChangeWheels(m_mainUIController.wheelsSelectedIndex);
+                kartCustomizer.ChangeCharacterHat(m_mainUIController.hatSelectedIndex);
+                kartCustomizer.ChangeMaterials(m_mainUIController.kartSelectedIndex, m_mainUIController.characterSelectedIndex);
             }
             // Set opponents AI input
             else
             {
                 // Set AI 
                 var kartMovement = newRacer.GetComponent<KartMovement>();
+                var kartAnimation = newRacer.GetComponent<KartAnimation>();
                 var simpleAIinput = newRacer.GetComponent<SimpleAIInput>();
                 kartMovement.SetInput(simpleAIinput);
+                kartAnimation.SetInput(simpleAIinput);
                 // Set AI delegate
                 m_mainUIController.onAISelected = simpleAIinput.SetAIDifficulty;
                 // Apply initial AI
@@ -153,6 +160,10 @@ public class LevelBuilder : MonoBehaviour
         m_raceManager.InitRaceManager(m_racers, OnRaceComplete);
         // Enable collectable timers
         m_collectableTimersParent.SetActive(true);
+        for(int i = 0; i < m_collectableTimersParent.transform.childCount; i++)
+        {
+            m_collectableTimersParent.transform.GetChild(i).gameObject.SetActive(true);
+        }
         // Enable rush countdown view
         m_mainUIController.EnableCountdownView();
     }
