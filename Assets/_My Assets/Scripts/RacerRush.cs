@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using KartGame.Track;
 
 public class RacerRush : Racer
 {
+    [SerializeField]
+    private List<TrailRenderer> m_boostTrail;
+
     private float m_countdownTimer;
 
     private Action<float> onUpdateCountdown;
@@ -70,5 +74,13 @@ public class RacerRush : Racer
         base.ResetRacerInfo();
 
         m_countdownTimer = 0;
+    }
+
+    public void EnableBoostTrail(bool enable)
+    {
+        for (int i = 0; i < m_boostTrail.Count; i++)
+        {
+            m_boostTrail[i].emitting = enable;
+        }
     }
 }
