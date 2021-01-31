@@ -804,6 +804,7 @@ GameObject:
   - component: {fileID: 1869363584100473698}
   - component: {fileID: 1869363584100473702}
   - component: {fileID: 3299617869439532710}
+  - component: {fileID: 8993363482718718015}
   - component: {fileID: 8636500401481326958}
   - component: {fileID: 1869363584100473703}
   - component: {fileID: 6929424223293825355}
@@ -865,6 +866,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f292ffb948323c49ac31e54ff737ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8993363482718718015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869363584100473705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98d1ae6ba71067b47a72a66295bd026f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_difficulty: 0
+  m_AISetup: {fileID: 11400000, guid: d4604e634d31ada4f8b46cb853a948c8, type: 2}
+  m_AISpline: {fileID: 0}
+  m_maxAcceleration: 1
+  m_maxSteering: 1
+  m_forwardDistance: 10
+  m_refAngle: 10
+  m_angleWeight: 1
+  m_laneWeight: 1
+  m_minLaneOffset: 1
+  m_minSpeedToTurn: 10
+  m_maxSpeedToTurn: 18
 --- !u!114 &8636500401481326958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1042,10 +1067,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_kartMovement: {fileID: 1869363584100473703}
   m_maxSpeed: 0
-  m_acceleration: 5
-  m_braking: 3
-  m_steering: 8
-  m_applyOnStart: 1
+  m_acceleration: 0
+  m_braking: 0
+  m_steering: 0
+  m_applySpecs: 1
 --- !u!54 &1869363584100473704
 Rigidbody:
   m_ObjectHideFlags: 0

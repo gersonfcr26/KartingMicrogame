@@ -20,11 +20,11 @@ public class RushManager : RaceManager
     public override void InitRaceManager(List<IRacer> racers, System.Action<bool> onRaceComplete)
     {
         base.InitRaceManager(racers, onRaceComplete);
-        print($"racers: {racers.Count}");
+
         for (int i = 0; i < racers.Count; i++)
         {
             // Set countdown time
-            racers[i].SetCountdownTimer(m_initialTime, OnUpdateCountdown);
+            racers[i].SetCountdownTimer(m_initialTime, i == 0 ? OnUpdateCountdown : (Action<float>)null);
         }
     }
 
@@ -79,11 +79,11 @@ public class RushManager : RaceManager
     {
         foreach (KeyValuePair<IRacer, Checkpoint> racerNextCheckpoint in m_RacerNextCheckpoints)
         {
-            if (racerNextCheckpoint.Key.GetCurrentLap() <= m_lapsRequired)
-                return false;
+            if (racerNextCheckpoint.Key == m_racerPlayer && racerNextCheckpoint.Key.GetCurrentLap() > m_lapsRequired)
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     private IEnumerator CallWhenRaceStarts(IRacer racer, Checkpoint checkpoint)
@@ -101,7 +101,7 @@ public class RushManager : RaceManager
         // Game  over
         if(value == 0)
         {
-
+            StopRace();
         }
 
         m_countdownView.SetCountdownView(value);

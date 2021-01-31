@@ -78,7 +78,6 @@ namespace KartGame.Timeline
         /// </summary>
         public void TriggerDirector ()
         {
-            print("TriggerDirector");
             director.Play();
             m_StartTimer = true;
         }
@@ -88,7 +87,6 @@ namespace KartGame.Timeline
         /// </summary>
         public void ResetTrigger ()
         {
-            print("ResetTrigger");
             director.Stop ();
             m_StartTimer = false;
             m_Timer = 0f;

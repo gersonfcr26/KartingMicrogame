@@ -1,5 +1,9 @@
-﻿using KartGame.Track;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using KartGame.Track;
+using TMPro;
 
 namespace KartGame.UI
 {
@@ -15,11 +19,48 @@ namespace KartGame.UI
         [SerializeField]
         private CountdownView m_countdownView;
 
+        [Header("Spec Sliders")]
+        [SerializeField]
+        private Slider m_maxSpeedSlider;
+        [SerializeField]
+        private Slider m_accelSlider;
+        [SerializeField]
+        private Slider m_brakesSlider;
+        [SerializeField]
+        private Slider m_steeringSlider;
+
+        [Header("Dropdown AI")]
+        [SerializeField]
+        private TMP_Dropdown m_AIDropdown;
+
         // Internal
         private RaceManager m_raceManager;
         private GameMode m_gameMode;
 
+        public Action<float> onMaxSpeedChange;
+        public Action<float> onAccelChange;
+        public Action<float> onBrakingChange;
+        public Action<float> onSteeringChange;
+        public Action<int> onAISelected;
+
         public bool isPausable { get; set; }
+
+        public float currMaxSpeedValue => m_maxSpeedSlider.value;
+        public float currAccelValue => m_accelSlider.value;
+        public float currBrakingValue => m_brakesSlider.value;
+        public float currSteeringValue => m_steeringSlider.value;
+        public int currAI => m_AIDropdown.value;
+
+        private void Awake()
+        {
+            m_AIDropdown.ClearOptions();
+            List<string> options = new List<string>((int)AIDifficulty.Count);
+            for(int i = 0; i < (int)AIDifficulty.Count; i++)
+            {
+                options.Add(((AIDifficulty)i).ToString());
+            }
+            m_AIDropdown.AddOptions(options);
+        }
 
         private void OnEnable()
         {
@@ -57,6 +98,46 @@ namespace KartGame.UI
         public void EnableCountdownView()
         {
             m_countdownView.gameObject.SetActive(true);
+        }
+
+        /// <summary>
+        /// Unity event from settings menu.
+        /// </summary>
+        public void OnMaxSpeedChanged(float value)
+        {
+            onMaxSpeedChange?.Invoke(value);
+        }
+
+        /// <summary>
+        /// Unity event from settings menu.
+        /// </summary>
+        public void OnAccelChanged(float value)
+        {
+            onAccelChange?.Invoke(value);
+        }
+
+        /// <summary>
+        /// Unity event from settings menu.
+        /// </summary>
+        public void OnBrakingChanged(float value)
+        {
+            onBrakingChange?.Invoke(value);
+        }
+
+        /// <summary>
+        /// Unity event from settings menu.
+        /// </summary>
+        public void OnSteeringChanged(float value)
+        {
+            onSteeringChange?.Invoke(value);
+        }
+
+        /// <summary>
+        /// Unity event from settings menu.
+        /// </summary>
+        public void OnAISelected(int selection)
+        {
+            onAISelected?.Invoke(selection);
         }
     }
 }

@@ -24,13 +24,20 @@ public class CollectableTrigger : MonoBehaviour, ICollectable
 
     private void Awake()
     {
-        m_TimerText.SetText( (m_timeToAdd >= 0 ? "+ " : "- ") + m_timeToAdd.ToString("F0"));
+        m_TimerText.SetText( (m_timeToAdd >= 0 ? "+" : "-") + m_timeToAdd.ToString("F0"));
     }
 
     public object GetCollectableInfo(out CollectableType collectableType)
     {
         collectableType = m_collectableType;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
         return m_timeToAdd;
+    }
+
+    private IEnumerator EnableBack()
+    {
+        yield return new WaitForSeconds(1);
+
+        gameObject.SetActive(true);
     }
 }
