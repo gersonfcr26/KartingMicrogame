@@ -1,5 +1,5 @@
 # KartingMicrogame
-Geta Club Programming Test
+Geta Game Studios Programming Test
 
 The project has 3 scenes that display seven of the eight points required in this test.
 
