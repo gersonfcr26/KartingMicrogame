@@ -15,6 +15,8 @@ namespace KartGame.UI
         public DirectorTrigger raceCountdownTrigger;
         [Tooltip("The UI canvases used for game play.")]
         public Canvas[] gamePlayCanvas;
+        [SerializeField]
+        private bool m_testForLanes;
 
         bool m_ShowMainCanvas = true;
         bool m_FirstTime = true;
@@ -29,7 +31,10 @@ namespace KartGame.UI
         void Start()
         {
             //Start the game immediately rather than show the pause menu.
-            //HandleMenuButton();
+            if (m_testForLanes)
+            {
+                HandleMenuButton();
+            }
         }
 
         /// <summary>
@@ -49,13 +54,19 @@ namespace KartGame.UI
             {
                 // WORKAROUND: This is due to a problem where setting the time scale to 0 causes audio to stop playing.
                 Time.timeScale = 0.00001f;
-                mainMenu.gameObject.SetActive(true);
+                if (mainMenu != null)
+                {
+                    mainMenu.gameObject.SetActive(true);
+                }
                 foreach (var i in gamePlayCanvas) i.gameObject.SetActive(false);
             }
             else
             {
                 Time.timeScale = 1;
-                mainMenu.gameObject.SetActive(false);
+                if (mainMenu != null)
+                {
+                    mainMenu.gameObject.SetActive(false);
+                }
                 foreach (var i in gamePlayCanvas) i.gameObject.SetActive(true);
             }
             m_ShowMainCanvas = show;
