@@ -1,7 +1,7 @@
 # KartingMicrogame
 Geta Game Studios Programming Test
 
-The project has 3 scenes that display seven of the eight points required in this test.
+The project has three scenes that display seven of the eight points required in this test.
 
 1. FreeControlScene
 Has a screen menu that allows to test the following:
