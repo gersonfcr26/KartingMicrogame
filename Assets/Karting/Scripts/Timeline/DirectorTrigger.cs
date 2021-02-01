@@ -53,9 +53,11 @@ namespace KartGame.Timeline
         bool m_StartTimer;
         float m_Timer;
 
+        private Action onCountdownComplete;
+
         void Awake ()
         {
-            ResetTrigger ();
+            //ResetTrigger ();
         }
 
         void Update ()

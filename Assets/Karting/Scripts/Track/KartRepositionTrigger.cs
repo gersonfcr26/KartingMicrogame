@@ -21,6 +21,7 @@ namespace KartGame.Track
 
         void Awake ()
         {
+            movable = FindObjectOfType<KartMovement>();
             m_Movable = (IMovable)movable;
         }
 

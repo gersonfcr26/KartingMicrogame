@@ -108,11 +108,20 @@ namespace KartGame.Track
                 }
             }
 
-            m_Racer = (IRacer)initialRacer;
+            if (initialRacer != null)
+            {
+                m_Racer = (IRacer)initialRacer;
+            }
         }
 
         void Update()
         {
+            // Check racer reference
+            if(m_Racer == null)
+            {
+                return;
+            }
+
             m_StringBuilder.Clear();
 
             for (int i = 0; i < m_DisplayCalls.Count; i++)
